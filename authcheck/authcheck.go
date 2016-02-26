@@ -28,11 +28,11 @@ func Handler(handler http.Handler) http.Handler {
 		}
 		req.Header.Set("Authorization", auth)
 		resp, err := http.DefaultClient.Do(req)
-		defer resp.Body.Close()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		defer resp.Body.Close()
 
 		if resp.StatusCode != 200 {
 			body, err := ioutil.ReadAll(resp.Body)
