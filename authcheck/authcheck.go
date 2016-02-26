@@ -35,7 +35,6 @@ func Handler(handler http.Handler) http.Handler {
 		}
 		defer resp.Body.Close()
 
-		defer resp.Body.Close()
 		if resp.StatusCode != 200 {
 			body, err := ioutil.ReadAll(resp.Body)
 			if err != nil {
