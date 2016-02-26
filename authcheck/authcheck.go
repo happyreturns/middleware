@@ -33,6 +33,7 @@ func Handler(handler http.Handler) http.Handler {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		defer resp.Body.Close()
 
 		defer resp.Body.Close()
 		if resp.StatusCode != 200 {
