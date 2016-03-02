@@ -1,4 +1,4 @@
-package httplog
+package middleware
 
 import (
 	"log"
@@ -32,7 +32,7 @@ func (rw *responseWriter) Status() int {
 	return rw.status
 }
 
-func Handler(handler http.Handler) http.Handler {
+func Logger(handler http.Handler) http.Handler {
 	app := path.Base(os.Args[0])
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		rw := NewResponseWriter(w)
