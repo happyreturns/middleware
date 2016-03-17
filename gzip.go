@@ -21,7 +21,9 @@ func (w gzipResponseWriter) Write(b []byte) (int, error) {
 }
 
 func (w gzipResponseWriter) Flush() {
-	w.Writer.Flush()
+	if gz, ok := w.Writer.(http.Flusher); ok {
+		gz.Flush()
+	}
 	if fw, ok := w.ResponseWriter.(http.Flusher); ok {
 		fw.Flush()
 	}
