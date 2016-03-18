@@ -1,16 +1,22 @@
 build:
+	@true
 
 run:
+	@true
 
 quick_run:
+	@true
 
 deps:
+	@true
 
 clean:
+	@true
 
 test:
 
-tables:
+schema:
+	@true
 
-.PHONY: build run quick_run deps clean test tables
+.PHONY: build run quick_run deps clean test schema
 
