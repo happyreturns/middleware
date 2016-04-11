@@ -1,11 +1,9 @@
-// per https://gist.github.com/bryfry/09a650eb8aac0fb76c24
-// and https://github.com/NYTimes/gziphandler/blob/master/gzip.go
-
 package middleware
 
 import (
 	"compress/gzip"
 	"io"
+	"log"
 	"net/http"
 	"strings"
 )
@@ -18,6 +16,11 @@ type gzipResponseWriter struct {
 
 func (w gzipResponseWriter) Write(b []byte) (int, error) {
 	return w.Writer.Write(b)
+}
+
+func (w gzipResponseWriter) WriteHeader(code int) {
+	w.Header().Del("Content-Length")
+	w.ResponseWriter.WriteHeader(code)
 }
 
 func (w gzipResponseWriter) Flush() {
@@ -37,7 +40,12 @@ func Gzip(handler http.Handler) http.Handler {
 		}
 		w.Header().Set("Content-Encoding", "gzip")
 		gz := gzip.NewWriter(w)
-		defer gz.Close()
+		defer func() {
+			err := gz.Close()
+			if err != nil {
+				log.Println("gz.Close:", err)
+			}
+		}()
 		gzw := gzipResponseWriter{gz, w}
 		handler.ServeHTTP(gzw, r)
 	})
