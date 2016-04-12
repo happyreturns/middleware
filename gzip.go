@@ -7,7 +7,6 @@ import (
 	"strings"
 )
 
-// Gzip Compression
 type gzipResponseWriter struct {
 	io.Writer
 	http.ResponseWriter
@@ -31,6 +30,12 @@ func (w gzipResponseWriter) Flush() {
 	}
 }
 
+/*
+Wraps an http.Handler and gzips the response if the request Accept-Encoding header contains gzip.
+
+Example usage:
+    http.ListenAndServe(":80", middleware.Gzip(router))
+*/
 func Gzip(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if !strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
