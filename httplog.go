@@ -37,6 +37,6 @@ func Logger(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		rw := NewResponseWriter(w)
 		handler.ServeHTTP(rw, r)
-		logger.Printf("%s %s %s %d", app, r.Method, r.URL.Path, rw.Status())
+		logger.Printf("%s %s %s %d", app, r.Method, r.URL.RequestURI(), rw.Status())
 	})
 }
