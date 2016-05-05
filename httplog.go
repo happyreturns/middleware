@@ -43,6 +43,6 @@ func Logger(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		rw := newStatusResponseWriter(w)
 		handler.ServeHTTP(rw, r)
-		logger.Printf("%s %s %s %d", app, r.Method, r.URL.RequestURI(), rw.Status())
+		logger.Printf("%s %s %s %s %d", app, r.Header.Get("requestID"), r.Method, r.URL.RequestURI(), rw.Status())
 	})
 }
