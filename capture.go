@@ -1,11 +1,26 @@
 package middleware
 
 import (
+	"bytes"
 	"github.com/julienschmidt/httprouter"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/http/httptest"
 )
+
+func copyBody(r *http.Request) ([]byte, error) {
+	if r.Body == nil {
+		return nil, nil
+	}
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	r.Body = ioutil.NopCloser(bytes.NewBuffer(body))
+	return body, nil
+}
 
 /*
 Captures http.Response data from an httprouter.Handle.
@@ -26,6 +41,10 @@ Example:
 func CaptureResponse(handler httprouter.Handle, fn func(*httptest.ResponseRecorder, *http.Request)) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		w2 := httptest.NewRecorder()
+		body, err := copyBody(r)
+		if err != nil {
+			log.Println(err)
+		}
 		handler(w2, r, p)
 
 		// write out to original writer
@@ -35,10 +54,16 @@ func CaptureResponse(handler httprouter.Handle, fn func(*httptest.ResponseRecord
 				w.Header().Add(k, v)
 			}
 		}
-		_, err := w.Write(w2.Body.Bytes())
+		_, err = w.Write(w2.Body.Bytes())
 		if err != nil {
 			log.Panic(err)
 		}
+
+		// Reset the body because it's empty after being read
+		if body != nil {
+			r.Body = ioutil.NopCloser(bytes.NewBuffer(body))
+		}
+
 		fn(w2, r)
 	}
 }
