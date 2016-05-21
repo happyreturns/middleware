@@ -12,6 +12,8 @@ func ForceHTTPS(h http.Handler) http.Handler {
 			u := *r.URL
 			u.Scheme = "https"
 			http.Redirect(w, r, u.String(), http.StatusMovedPermanently)
+		} else {
+			h.ServeHTTP(w, r)
 		}
 	})
 }
