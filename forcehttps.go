@@ -9,7 +9,7 @@ func ForceHTTPS(h http.Handler) http.Handler {
 		// normally the test is `!= "https"`, but we're permitting
 		// Heroku-free dev-mode.
 		if r.Header.Get("X-Forwarded-Proto") == "http" {
-			u := "https:" + r.URL.Path
+			u := "https://" + r.Host + r.RequestURI
 			if r.URL.RawQuery != "" {
 				u = u + "?" + r.URL.RawQuery
 			}
