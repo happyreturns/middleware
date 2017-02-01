@@ -3,6 +3,7 @@ package middleware
 import (
 	"log"
 	"net/http"
+	"net/http/httputil"
 	"os"
 	"path"
 )
@@ -41,8 +42,9 @@ Example usage:
 func Logger(handler http.Handler) http.Handler {
 	app := path.Base(os.Args[0])
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		logReq, _ := httputil.DumpRequest(r)
 		rw := newStatusResponseWriter(w)
 		handler.ServeHTTP(rw, r)
-		logger.Printf("%s %s %s %s %d", app, r.Header.Get("requestID"), r.Method, r.URL.RequestURI(), rw.Status())
+		logger.Printf("%s %s %s\n\n %d", app, r.Header.Get("requestID"), logReq, rw.Status())
 	})
 }
