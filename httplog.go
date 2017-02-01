@@ -42,7 +42,7 @@ Example usage:
 func Logger(handler http.Handler) http.Handler {
 	app := path.Base(os.Args[0])
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		logReq, _ := httputil.DumpRequest(r)
+		logReq, _ := httputil.DumpRequest(r, true)
 		rw := newStatusResponseWriter(w)
 		handler.ServeHTTP(rw, r)
 		logger.Printf("%s %s %s\n\n %d", app, r.Header.Get("requestID"), logReq, rw.Status())
